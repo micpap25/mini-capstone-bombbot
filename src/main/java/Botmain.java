@@ -18,7 +18,9 @@ public class Botmain extends ListenerAdapter {
         }
         System.out.println("Message recieved from " + event.getAuthor().getName() + ":" + event.getMessage().getContentDisplay());
         if(event.getMessage().getContentRaw().equals("bomb!help")){
-            event.getChannel().sendMessage("Hi! I'm a minigame bot for playing games like Minesweeper, Wires, and Server Scatter! BOOM!").queue();
+            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\n\n Minesweeper : bomb!mine\n Wires : bomb!wire @player1 @player2\n Server Scatter : bomb!scatter\n BOOM!```").queue();
         }
+
+
     }
 }
