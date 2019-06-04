@@ -6,12 +6,13 @@ import javax.security.auth.login.LoginException;
 
 public class Botmain extends ListenerAdapter {
     public static void main(String[] args) throws LoginException {
-        JDABuilder jda = new JDABuilder(AccountType.BOT);
+        JDABuilder jdaB = new JDABuilder(AccountType.BOT);
         String token = "NTgzNjU3NTU5Nzk0MTIyNzUy.XPAerg.Nx7Nw1VJG5j3Ttc6Roi9RXpAT4Y";
-        jda.setToken(token);
-        jda.addEventListener(new Botmain());
-        jda.buildAsync();
+        jdaB.setToken(token);
+        jdaB.addEventListener(new Botmain());
+        jdaB.buildAsync();
     }
+    @Override
     public void onMessageReceived(MessageReceivedEvent event){
         if(event.getAuthor().isBot()){
             return;
