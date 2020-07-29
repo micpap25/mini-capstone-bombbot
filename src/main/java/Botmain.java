@@ -1,11 +1,16 @@
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import javax.security.auth.login.LoginException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,10 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Botmain extends ListenerAdapter {
 
-    public static void main(String[] args) throws LoginException {
+    public static void main(String[] args) throws LoginException, IOException {
+        String key = new BufferedReader(new FileReader(new File("key"))).readLine();
         JDABuilder jdaB = new JDABuilder(AccountType.BOT);
-        String token = "NTgzNjU3NTU5Nzk0MTIyNzUy.XPAerg.Nx7Nw1VJG5j3Ttc6Roi9RXpAT4Y";
-        jdaB.setToken(token);
+        jdaB.setToken(key);
         jdaB.addEventListeners(new Botmain());
         jdaB.build();
     }
