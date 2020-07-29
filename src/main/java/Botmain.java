@@ -1,9 +1,9 @@
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.RestAction;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class Botmain extends ListenerAdapter {
         JDABuilder jdaB = new JDABuilder(AccountType.BOT);
         String token = "NTgzNjU3NTU5Nzk0MTIyNzUy.XPAerg.Nx7Nw1VJG5j3Ttc6Roi9RXpAT4Y";
         jdaB.setToken(token);
-        jdaB.addEventListener(new Botmain());
+        jdaB.addEventListeners(new Botmain());
         jdaB.build();
     }
 
@@ -319,8 +319,8 @@ public class Botmain extends ListenerAdapter {
             event.getChannel().sendMessage("```Welcome to Big Bomb! Respond right, or face the consequences! Click the check mark now to join!```").queue(
                     msg -> {
                         msg.addReaction("\u2705").queue();
-                        event.getChannel().getMessageById(msg.getId()).queueAfter(10, TimeUnit.SECONDS,
-                                msgtwo -> msgtwo.getReactions().get(0).getUsers().forEachAsync((u) ->
+                        event.getChannel().retrieveMessageById(msg.getId()).queueAfter(10, TimeUnit.SECONDS,
+                                msgtwo -> msgtwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
                                 {
                                     if (!u.isBot()) {
                                         players.add(u);
@@ -363,9 +363,9 @@ public class Botmain extends ListenerAdapter {
                             msg -> {
                                 msg.addReaction("\uD83C\uDDFE").queue();
                                 msg.addReaction("\uD83C\uDDF3").queue();
-                                event.getChannel().getMessageById(msg.getId()).queueAfter(finalTime, TimeUnit.SECONDS,
+                                event.getChannel().retrieveMessageById(msg.getId()).queueAfter(finalTime, TimeUnit.SECONDS,
                                         msgtwo -> {
-                                                msgtwo.getReactions().get(0).getUsers().forEachAsync((u) ->
+                                                msgtwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
                                                 {
                                                     if (u.equals(user) && !u.isBot()) {
                                                         if (yesStatement) {
@@ -380,7 +380,7 @@ public class Botmain extends ListenerAdapter {
                                                     }
                                                     return true;
                                                 });
-                                                msgtwo.getReactions().get(1).getUsers().forEachAsync((u) ->
+                                                msgtwo.getReactions().get(1).retrieveUsers().forEachAsync((u) ->
                                                 {
                                                     if (u.getName().equals(user.getName()) && !u.isBot()) {
                                                         if (!yesStatement) {
@@ -423,6 +423,9 @@ public class Botmain extends ListenerAdapter {
 
 
         }
+     //   if(messageComponents[0].equals("bomb!meme")){
+     //       event.getChannel().sendMessage().queue();
+     //   }
 
     }
 
