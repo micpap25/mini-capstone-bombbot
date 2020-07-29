@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,18 +76,6 @@ public class Botmain extends ListenerAdapter {
                     }
                 }
             }
-            /*ArrayList<Point> randomStart = new ArrayList<>();
-            for (int i = 0; i < minefield.length; i++) {
-                for (int j = 0; j < minefield[i].length; j++) {
-                    if (minefield[i][j] == 0) {
-                        Point p = new Point(i, j);
-                        randomStart.add(p);
-                    }
-                }
-            }
-            int randStart = (int) (Math.random() * randomStart.size());
-
-            Point startingPoint = randomStart.get(randStart);*/
             int randZeroX = (int) (Math.random() * minefield[0].length);
             int randZeroY = (int) (Math.random() * minefield.length);
 
@@ -96,9 +85,7 @@ public class Botmain extends ListenerAdapter {
             }
 
             String[] s = new String[15];
-            for (int i = 0; i<s.length;i++ ) {
-                s[i] = "";
-            }
+            Arrays.fill(s, "");
             for (int i = 0; i < s.length; i++) {
                 for (int j = 0; j < minefield[i].length; j++) {
                     if (minefield[i][j] == -1) {
@@ -283,10 +270,10 @@ public class Botmain extends ListenerAdapter {
                     }
                     if (wires[i].equals("blue")) {
                         if (i == safeWire)
-                            playertwocontent.append(":large_blue_circle:||:white_check_mark:||:large_blue_circle:\n");
+                            playertwocontent.append(":blue_circle:||:white_check_mark:||:blue_circle:\n");
 
                         else
-                            playertwocontent.append(":large_blue_circle:||:bomb:||:large_blue_circle:\n");
+                            playertwocontent.append(":blue_circle:||:bomb:||:blue_circle:\n");
                     }
                     if (wires[i].equals("black")) {
                         if (i == safeWire)
@@ -436,7 +423,6 @@ public class Botmain extends ListenerAdapter {
 
     private void sendPrivateMessage(User user, String content)
     {
-        // notice that we are not placing a semicolon (;) in the callback this time!
         user.openPrivateChannel().queue( (channel) -> channel.sendMessage(content).queue() );
     }
 }
