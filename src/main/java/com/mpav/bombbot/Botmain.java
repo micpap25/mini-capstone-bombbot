@@ -23,8 +23,7 @@ public class Botmain extends ListenerAdapter {
 
     public static void main(String[] args) throws LoginException, IOException {
         String key = new BufferedReader(new FileReader(new File("key"))).readLine();
-        JDABuilder jdaB = new JDABuilder(AccountType.BOT);
-        jdaB.setToken(key);
+        JDABuilder jdaB = JDABuilder.createDefault(key);
         jdaB.addEventListeners(new Botmain());
         jdaB.build();
     }
@@ -48,7 +47,7 @@ public class Botmain extends ListenerAdapter {
         String[] messageComponents = message.getContentRaw().split(" ");
 
         if(messageComponents[0].equals("bomb!help")){
-            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\n\n Minesweeper : bomb!mine\n Wires : bomb!wire @player1 @player2 [optional: number of sets]\n Big Bomb : bomb!bigbomb\n BOOM!```").queue();
+            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\n\n Minesweeper : bomb!mine\n Wires : bomb!wires @player1 @player2 [optional: number of sets]\n Big Bomb : bomb!bigbomb\n BOOM!```").queue();
             if(messageComponents.length > 10){
                 event.getChannel().sendMessage("```...dude, chill out a little...```").queueAfter(1, TimeUnit.SECONDS);
             }
