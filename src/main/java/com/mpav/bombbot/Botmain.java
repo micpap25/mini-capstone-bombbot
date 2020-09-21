@@ -1,3 +1,5 @@
+package com.mpav.bombbot;
+
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -40,7 +42,7 @@ public class Botmain extends ListenerAdapter {
             return;
         }
 
-        System.out.println("Message recieved from " + event.getAuthor().getName() + ":" + event.getMessage().getContentDisplay());
+        //System.out.println("Message recieved from " + event.getAuthor().getName() + ":" + event.getMessage().getContentDisplay());
 
         Message message = event.getMessage();
         String[] messageComponents = message.getContentRaw().split(" ");
