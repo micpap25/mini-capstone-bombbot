@@ -40,7 +40,7 @@ public class Botmain extends ListenerAdapter {
             return;
         }
 
-        //System.out.println("Message recieved from " + event.getAuthor().getName() + ":" + event.getMessage().getContentDisplay());
+        //System.out.println("Message received from " + event.getAuthor().getName() + ":" + event.getMessage().getContentDisplay());
 
         Message message = event.getMessage();
         String[] messageComponents = message.getContentRaw().split(" ");
@@ -53,25 +53,26 @@ public class Botmain extends ListenerAdapter {
         }
 
         if (messageComponents[0].equals("bomb!mine")) {
+            int rows = 15;
+            int columns = 15;
+            int[][] minefield = new int[rows][columns];
 
-            int[][] minefield = new int[15][15];
-
-            for (int i = 0; i < minefield.length; i++) {
-                for (int j = 0; j < minefield[i].length; j++) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
                     int bomb = (int) (Math.random() * 255);
                     if (bomb < 40)
                         minefield[i][j] = -1;
                 }
             }
-            for (int i = 0; i < minefield.length; i++) {
-                for (int j = 0; j < minefield[i].length; j++) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
                     if (minefield[i][j] == -1)
                         continue;
                     for (int k = -1; k <= 1; k++) {
                         for (int l = -1; l <= 1; l++) {
                             if (k == 0 && l == 0)
                                 continue;
-                            if (i + k >= 0 && i + k < minefield.length && j + l >= 0 && j + l < minefield.length && minefield[i + k][j + l] == -1)
+                            if (i + k >= 0 && i + k < rows && j + l >= 0 && j + l < columns && minefield[i + k][j + l] == -1)
                                 minefield[i][j]++;
                         }
                     }
@@ -85,10 +86,10 @@ public class Botmain extends ListenerAdapter {
                 randZeroY = (int) (Math.random() * minefield.length);
             }
 
-            String[] s = new String[15];
+            String[] s = new String[rows];
             Arrays.fill(s, "");
-            for (int i = 0; i < s.length; i++) {
-                for (int j = 0; j < minefield[i].length; j++) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
                     if (minefield[i][j] == -1) {
                         s[i] += "||:bomb:||";
                     }
@@ -123,7 +124,7 @@ public class Botmain extends ListenerAdapter {
                 }
             }
             event.getChannel().sendMessage("```Generating...```").queue();
-            for (String value : s) event.getChannel().sendMessage(value).queue();
+            for (String value : s) event.getChannel().sendMessage(value).queueAfter(200, TimeUnit.MILLISECONDS);
         }
 
         if (messageComponents[0].equals("bomb!wires")) {
@@ -141,10 +142,10 @@ public class Botmain extends ListenerAdapter {
                     return;
                 }
             }
-            StringBuilder playeronecontent = new StringBuilder("```Rules are prioritized from top to bottom. If a rule cannot be fulfilled, move on.```");
-            StringBuilder playertwocontent = new StringBuilder();
+            StringBuilder playerOneContent = new StringBuilder("```Rules are prioritized from top to bottom. If a rule cannot be fulfilled, move on.```");
+            StringBuilder playerTwoContent = new StringBuilder();
             final String[] colors = {"red", "blue", "black", "white"};
-            final String[] ruletypes = {"noneof", "twoormore", "exactlyone", "else"};
+            final String[] ruleTypes = {"noneof", "twoormore", "exactlyone", "else"};
             final String[] placements = {"first", "last", "second"};
             for (int set = 0; set < numSets; set++) {
                 int numWires = (int) (Math.random() * 3) + 4;
@@ -173,18 +174,18 @@ public class Botmain extends ListenerAdapter {
 
                 for (int i = 0; i < numRules - 1; i++) {
 
-                    String rule = ruletypes[(int) (Math.random() * 3)];
+                    String rule = ruleTypes[(int) (Math.random() * 3)];
                     rules[i][0] = rule;
                     rules[i][1] = colors[(int) (Math.random() * colors.length)];
-                    String cutcolor = colors[(int) (Math.random() * colors.length)];
-                    if (cutcolor.equals("red") && numColors[0] <= 1 || cutcolor.equals("blue") && numColors[1] <= 1 || cutcolor.equals("black") && numColors[2] <= 1 || cutcolor.equals("white") && numColors[3] <= 1) {
+                    String cutColor = colors[(int) (Math.random() * colors.length)];
+                    if (cutColor.equals("red") && numColors[0] <= 1 || cutColor.equals("blue") && numColors[1] <= 1 || cutColor.equals("black") && numColors[2] <= 1 || cutColor.equals("white") && numColors[3] <= 1) {
                         rules[i][2] = placements[(int) (Math.random() * 2)];
                     } else {
                         rules[i][2] = placements[(int) (Math.random() * placements.length)];
                     }
-                    rules[i][3] = cutcolor;
+                    rules[i][3] = cutColor;
 
-                    if (cutcolor.equals("red") && numColors[0] > 0 || cutcolor.equals("blue") && numColors[1] > 0 || cutcolor.equals("black") && numColors[2] > 0 || cutcolor.equals("white") && numColors[3] > 0) {
+                    if (cutColor.equals("red") && numColors[0] > 0 || cutColor.equals("blue") && numColors[1] > 0 || cutColor.equals("black") && numColors[2] > 0 || cutColor.equals("white") && numColors[3] > 0) {
                         if (rule.equals("noneof")) {
                             if (rules[i][1].equals("red") && numColors[0] == 0 || rules[i][1].equals("blue") && numColors[1] == 0 || rules[i][1].equals("black") && numColors[2] == 0 || rules[i][1].equals("white") && numColors[3] == 0) {
                                 if (!safeWirePlaced) {
@@ -213,28 +214,28 @@ public class Botmain extends ListenerAdapter {
                 }
 
                 rules[numRules - 1][0] = "else";
-                String cutcolor = colors[(int) (Math.random() * colors.length)];
-                while (cutcolor.equals("red") && numColors[0] == 0 || cutcolor.equals("blue") && numColors[1] == 0 || cutcolor.equals("black") && numColors[2] == 0 || cutcolor.equals("white") && numColors[3] == 0) {
-                    cutcolor = colors[(int) (Math.random() * colors.length)];
+                String cutColor = colors[(int) (Math.random() * colors.length)];
+                while (cutColor.equals("red") && numColors[0] == 0 || cutColor.equals("blue") && numColors[1] == 0 || cutColor.equals("black") && numColors[2] == 0 || cutColor.equals("white") && numColors[3] == 0) {
+                    cutColor = colors[(int) (Math.random() * colors.length)];
                 }
-                if (cutcolor.equals("red") && numColors[0] <= 1 || cutcolor.equals("blue") && numColors[1] <= 1 || cutcolor.equals("black") && numColors[2] <= 1 || cutcolor.equals("white") && numColors[3] <= 1) {
+                if (cutColor.equals("red") && numColors[0] <= 1 || cutColor.equals("blue") && numColors[1] <= 1 || cutColor.equals("black") && numColors[2] <= 1 || cutColor.equals("white") && numColors[3] <= 1) {
                     rules[numRules - 1][2] = placements[(int) (Math.random() * 2)];
                 } else {
                     rules[numRules - 1][2] = placements[(int) (Math.random() * placements.length)];
                 }
-                rules[numRules - 1][3] = cutcolor;
+                rules[numRules - 1][3] = cutColor;
                 if (!safeWirePlaced)
                     safeRule = rules[numRules - 1];
 
                 for (String[] rule : rules) {
                     if (rule[0].equals("noneof"))
-                        playeronecontent.append("```If there are no ").append(rule[1]).append(" wires, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
+                        playerOneContent.append("```If there are no ").append(rule[1]).append(" wires, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
                     if (rule[0].equals("exactlyone"))
-                        playeronecontent.append("```If there is exactly one ").append(rule[1]).append(" wire, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
+                        playerOneContent.append("```If there is exactly one ").append(rule[1]).append(" wire, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
                     if (rule[0].equals("twoormore"))
-                        playeronecontent.append("```If there are two or more ").append(rule[1]).append(" wires, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
+                        playerOneContent.append("```If there are two or more ").append(rule[1]).append(" wires, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
                     if (rule[0].equals("else"))
-                        playeronecontent.append("```Otherwise, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
+                        playerOneContent.append("```Otherwise, cut the ").append(rule[2]).append(" ").append(rule[3]).append(" wire.```");
                 }
 
                 if (safeRule[2].equals("first")) {
@@ -269,43 +270,43 @@ public class Botmain extends ListenerAdapter {
                 for (int i = 0; i < numWires; i++) {
                     if (wires[i].equals("red")) {
                         if (i == safeWire)
-                            playertwocontent.append(":red_circle:||:white_check_mark:||:red_circle:\n");
+                            playerTwoContent.append(":red_circle:||:white_check_mark:||:red_circle:\n");
 
                         else
-                            playertwocontent.append(":red_circle:||:bomb:||:red_circle:\n");
+                            playerTwoContent.append(":red_circle:||:bomb:||:red_circle:\n");
                     }
                     if (wires[i].equals("blue")) {
                         if (i == safeWire)
-                            playertwocontent.append(":blue_circle:||:white_check_mark:||:blue_circle:\n");
+                            playerTwoContent.append(":blue_circle:||:white_check_mark:||:blue_circle:\n");
 
                         else
-                            playertwocontent.append(":blue_circle:||:bomb:||:blue_circle:\n");
+                            playerTwoContent.append(":blue_circle:||:bomb:||:blue_circle:\n");
                     }
                     if (wires[i].equals("black")) {
                         if (i == safeWire)
-                            playertwocontent.append(":black_circle:||:white_check_mark:||:black_circle:\n");
+                            playerTwoContent.append(":black_circle:||:white_check_mark:||:black_circle:\n");
 
                         else
-                            playertwocontent.append(":black_circle:||:bomb:||:black_circle:\n");
+                            playerTwoContent.append(":black_circle:||:bomb:||:black_circle:\n");
                     }
                     if (wires[i].equals("white")) {
                         if (i == safeWire)
-                            playertwocontent.append(":white_circle:||:white_check_mark:||:white_circle:\n");
+                            playerTwoContent.append(":white_circle:||:white_check_mark:||:white_circle:\n");
 
                         else
-                            playertwocontent.append(":white_circle:||:bomb:||:white_circle:\n");
+                            playerTwoContent.append(":white_circle:||:bomb:||:white_circle:\n");
                     }
                 }
 
-                int indexone = (int) (Math.random() * 2);
-                int indextwo = indexone == 0 ? 1 : 0;
-                User userone = message.getMentionedUsers().get(indexone);
-                User usertwo = message.getMentionedUsers().get(indextwo);
-                sendPrivateMessage(userone, playeronecontent.toString());
-                sendPrivateMessage(usertwo, playertwocontent.toString());
+                int indexOne = (int) (Math.random() * 2);
+                int indexTwo = indexOne == 0 ? 1 : 0;
+                User userOne = message.getMentionedUsers().get(indexOne);
+                User userTwo = message.getMentionedUsers().get(indexTwo);
+                sendPrivateMessage(userOne, playerOneContent.toString());
+                sendPrivateMessage(userTwo, playerTwoContent.toString());
                 time += numRules * numWires * 2;
-                playeronecontent = new StringBuilder();
-                playertwocontent = new StringBuilder();
+                playerOneContent = new StringBuilder();
+                playerTwoContent = new StringBuilder();
             }
             event.getChannel().sendMessage("```The wires were sent to one player, and the instructions to solve were sent to the other. You have " + time + " seconds to solve. Good luck!```").queue();
             event.getChannel().sendMessage("```Time's up! Whether you solved it or not, this was a learning experience.```").queueAfter(time, TimeUnit.SECONDS);
@@ -318,7 +319,7 @@ public class Botmain extends ListenerAdapter {
                     msg -> {
                         msg.addReaction("\u2705").queue();
                         event.getChannel().retrieveMessageById(msg.getId()).queueAfter(10, TimeUnit.SECONDS,
-                                msgtwo -> msgtwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
+                                msgTwo -> msgTwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
                                 {
                                     if (!u.isBot()) {
                                         players.add(u);
@@ -361,8 +362,8 @@ public class Botmain extends ListenerAdapter {
                                 msg.addReaction("\uD83C\uDDFE").queue();
                                 msg.addReaction("\uD83C\uDDF3").queue();
                                 event.getChannel().retrieveMessageById(msg.getId()).queueAfter(finalTime, TimeUnit.SECONDS,
-                                        msgtwo -> {
-                                            msgtwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
+                                        msgTwo -> {
+                                            msgTwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
                                             {
                                                 if (u.equals(user) && !u.isBot()) {
                                                     if (yesStatement) {
@@ -376,7 +377,7 @@ public class Botmain extends ListenerAdapter {
                                                 }
                                                 return true;
                                             });
-                                            msgtwo.getReactions().get(1).retrieveUsers().forEachAsync((u) ->
+                                            msgTwo.getReactions().get(1).retrieveUsers().forEachAsync((u) ->
                                             {
                                                 if (u.getName().equals(user.getName()) && !u.isBot()) {
                                                     if (!yesStatement) {
