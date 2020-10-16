@@ -28,15 +28,15 @@ public class Botmain extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event){
+    public void onMessageReceived(MessageReceivedEvent event) {
         String[] trueMessages = {"do you want to defuse the bomb?", "are you scared?", "are you feeling OK?", "vent gas?", "are you going to win?"};
-        String [] trueCorrectResponses = {"You try, but fail. At least you aren't dead.","Good. A healthy dose of fear is necessary.", "Be safe, alright?", "You vent the gas. That feels better.", "That's the kind of attitude I like!"};
+        String[] trueCorrectResponses = {"You try, but fail. At least you aren't dead.", "Good. A healthy dose of fear is necessary.", "Be safe, alright?", "You vent the gas. That feels better.", "That's the kind of attitude I like!"};
         String[] trueMismatchResponses = {"Inaction leads to consequences!", "Well, you should be.", "Uh oh...", "You start to feel a little weak...", "Hey! Be more confident next time!"};
-        String[] falseMessages = {"do you not want to defuse the bomb?", "do you not not not not not want to defuse the bomb?","do you bravely jump at the bomb?", "is the pressure getting to you?", "ready to quit?"};
+        String[] falseMessages = {"do you not want to defuse the bomb?", "do you not not not not not want to defuse the bomb?", "do you bravely jump at the bomb?", "is the pressure getting to you?", "ready to quit?"};
         String[] falseCorrectResponses = {"Keep at it!", "Good catch!", "You're not brave, but at least you're not stupid.", "Confident as usual!", "Alright, then. But I want to see progress!"};
         String[] falseMismatchResponses = {"I mean, if you don't want to defuse it...", "Tricky, isn't it?", "You threw yourself... at a lit bomb...", "You start to choke up...", "Alright then. See you!"};
 
-        if(event.getAuthor().isBot()){
+        if (event.getAuthor().isBot()) {
             return;
         }
 
@@ -45,14 +45,14 @@ public class Botmain extends ListenerAdapter {
         Message message = event.getMessage();
         String[] messageComponents = message.getContentRaw().split(" ");
 
-        if(messageComponents[0].equals("bomb!help")){
+        if (messageComponents[0].equals("bomb!help")) {
             event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\n\n Minesweeper : bomb!mine\n Wires : bomb!wires @player1 @player2 [optional: number of sets]\n Big Bomb : bomb!bigbomb\n BOOM!```").queue();
-            if(messageComponents.length > 10){
+            if (messageComponents.length > 10) {
                 event.getChannel().sendMessage("```...dude, chill out a little...```").queueAfter(1, TimeUnit.SECONDS);
             }
         }
 
-        if (messageComponents[0].equals("bomb!mine")){
+        if (messageComponents[0].equals("bomb!mine")) {
 
             int[][] minefield = new int[15][15];
 
@@ -65,13 +65,13 @@ public class Botmain extends ListenerAdapter {
             }
             for (int i = 0; i < minefield.length; i++) {
                 for (int j = 0; j < minefield[i].length; j++) {
-                    if(minefield[i][j] == -1)
+                    if (minefield[i][j] == -1)
                         continue;
-                    for(int k = -1; k <= 1; k++){
-                        for(int l = -1; l <= 1; l++){
-                            if(k==0&&l==0)
+                    for (int k = -1; k <= 1; k++) {
+                        for (int l = -1; l <= 1; l++) {
+                            if (k == 0 && l == 0)
                                 continue;
-                            if(i+k >= 0 && i+k < minefield.length && j+l >= 0 && j+l < minefield.length && minefield[i+k][j+l] == -1)
+                            if (i + k >= 0 && i + k < minefield.length && j + l >= 0 && j + l < minefield.length && minefield[i + k][j + l] == -1)
                                 minefield[i][j]++;
                         }
                     }
@@ -94,8 +94,7 @@ public class Botmain extends ListenerAdapter {
                     }
                     if (minefield[i][j] == 0 && i == randZeroY && j == randZeroX) {
                         s[i] += ":zero:";
-                    }
-                    else if (minefield[i][j] == 0 )
+                    } else if (minefield[i][j] == 0)
                         s[i] += "||:zero:||";
                     if (minefield[i][j] == 1) {
                         s[i] += "||:one:||";
@@ -127,14 +126,14 @@ public class Botmain extends ListenerAdapter {
             for (String value : s) event.getChannel().sendMessage(value).queue();
         }
 
-        if (messageComponents[0].equals("bomb!wires")){
-            if(message.getMentionedUsers().size() != 2 || messageComponents.length > 4){
+        if (messageComponents[0].equals("bomb!wires")) {
+            if (message.getMentionedUsers().size() != 2 || messageComponents.length > 4) {
                 event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                 return;
             }
             int numSets = 1;
             int time = 0;
-            if(messageComponents.length == 4) {
+            if (messageComponents.length == 4) {
                 try {
                     numSets = Integer.parseInt(messageComponents[3]);
                 } catch (NumberFormatException e) {
@@ -312,7 +311,7 @@ public class Botmain extends ListenerAdapter {
             event.getChannel().sendMessage("```Time's up! Whether you solved it or not, this was a learning experience.```").queueAfter(time, TimeUnit.SECONDS);
         }
 
-        if (messageComponents[0].equals("bomb!bigbomb")){
+        if (messageComponents[0].equals("bomb!bigbomb")) {
 
             ArrayList<User> players = new ArrayList<>();
             event.getChannel().sendMessage("```Welcome to Big Bomb! Respond right, or face the consequences! Click the check mark now to join!```").queue(
@@ -335,22 +334,21 @@ public class Botmain extends ListenerAdapter {
             }
             long time = 5;
             int count = 0;
-            if(players.size()== 0)
+            if (players.size() == 0)
                 event.getChannel().sendMessage("```Aww.... nobody wanted to play!```").queue();
             else if (players.size() == 1)
                 event.getChannel().sendMessage("```That's really kind of you... but we need at least 2 people to play!```").queue();
             else {
                 event.getChannel().sendMessage("```Time's up! Let's get started!```").queue();
-                while(players.size() > 1){
-                    boolean yesStatement = (int)(Math.random()*2 ) == 0;
+                while (players.size() > 1) {
+                    boolean yesStatement = (int) (Math.random() * 2) == 0;
                     RestAction<Message> action;
-                    User user = players.get((int)(Math.random()*players.size()));
+                    User user = players.get((int) (Math.random() * players.size()));
                     int index;
-                    if(yesStatement) {
+                    if (yesStatement) {
                         index = (int) (Math.random() * trueMessages.length);
                         action = event.getChannel().sendMessage("```" + user.getName() + ", " + trueMessages[index] + "```");
-                    }
-                    else {
+                    } else {
                         index = (int) (Math.random() * falseMessages.length);
                         action = event.getChannel().sendMessage("```" + user.getName() + ", " + falseMessages[index] + "```");
                     }
@@ -364,34 +362,34 @@ public class Botmain extends ListenerAdapter {
                                 msg.addReaction("\uD83C\uDDF3").queue();
                                 event.getChannel().retrieveMessageById(msg.getId()).queueAfter(finalTime, TimeUnit.SECONDS,
                                         msgtwo -> {
-                                                msgtwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
-                                                {
-                                                    if (u.equals(user) && !u.isBot()) {
-                                                        if (yesStatement) {
-                                                            event.getChannel().sendMessage("```" + trueCorrectResponses[index] + "```").queue();
-                                                            isSafeYes.set(true);
-                                                        } else {
-                                                            event.getChannel().sendMessage("```" +falseMismatchResponses[index] + "```").queue();
-                                                            players.remove(user);
-                                                        }
-                                                        return false;
+                                            msgtwo.getReactions().get(0).retrieveUsers().forEachAsync((u) ->
+                                            {
+                                                if (u.equals(user) && !u.isBot()) {
+                                                    if (yesStatement) {
+                                                        event.getChannel().sendMessage("```" + trueCorrectResponses[index] + "```").queue();
+                                                        isSafeYes.set(true);
+                                                    } else {
+                                                        event.getChannel().sendMessage("```" + falseMismatchResponses[index] + "```").queue();
+                                                        players.remove(user);
                                                     }
-                                                    return true;
-                                                });
-                                                msgtwo.getReactions().get(1).retrieveUsers().forEachAsync((u) ->
-                                                {
-                                                    if (u.getName().equals(user.getName()) && !u.isBot()) {
-                                                        if (!yesStatement) {
-                                                            event.getChannel().sendMessage("```" +falseCorrectResponses[index] + "```" ).queue();
-                                                            isSafeNo.set(true);
-                                                        } else {
-                                                            event.getChannel().sendMessage("```" +trueMismatchResponses[index] + "```").queue();
-                                                            players.remove(user);
-                                                        }
-                                                        return false;
+                                                    return false;
+                                                }
+                                                return true;
+                                            });
+                                            msgtwo.getReactions().get(1).retrieveUsers().forEachAsync((u) ->
+                                            {
+                                                if (u.getName().equals(user.getName()) && !u.isBot()) {
+                                                    if (!yesStatement) {
+                                                        event.getChannel().sendMessage("```" + falseCorrectResponses[index] + "```").queue();
+                                                        isSafeNo.set(true);
+                                                    } else {
+                                                        event.getChannel().sendMessage("```" + trueMismatchResponses[index] + "```").queue();
+                                                        players.remove(user);
                                                     }
-                                                    return true;
-                                                });
+                                                    return false;
+                                                }
+                                                return true;
+                                            });
 
                                         });
                             });
@@ -400,12 +398,12 @@ public class Botmain extends ListenerAdapter {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (!isSafeYes.get() && !isSafeNo.get() && oldLength.get() == players.size()){
+                    if (!isSafeYes.get() && !isSafeNo.get() && oldLength.get() == players.size()) {
                         event.getChannel().sendMessage("```Oops! Out of time...```").queue();
                         players.remove(user);
                     }
                     count++;
-                    if(count >= 10 && time > 1) {
+                    if (count >= 10 && time > 1) {
                         time--;
                         count = 0;
                     }
@@ -420,14 +418,13 @@ public class Botmain extends ListenerAdapter {
 
 
         }
-     //   if(messageComponents[0].equals("bomb!meme")){
-     //       event.getChannel().sendMessage().queue();
-     //   }
+        //   if(messageComponents[0].equals("bomb!meme")){
+        //       event.getChannel().sendMessage().queue();
+        //   }
 
     }
 
-    private void sendPrivateMessage(User user, String content)
-    {
-        user.openPrivateChannel().queue( (channel) -> channel.sendMessage(content).queue() );
+    private void sendPrivateMessage(User user, String content) {
+        user.openPrivateChannel().queue((channel) -> channel.sendMessage(content).queue());
     }
 }
