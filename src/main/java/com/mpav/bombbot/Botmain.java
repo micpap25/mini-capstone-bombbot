@@ -124,7 +124,11 @@ public class Botmain extends ListenerAdapter {
                 }
             }
             event.getChannel().sendMessage("```Generating...```").queue();
-            for (String value : s) event.getChannel().sendMessage(value).queueAfter(200, TimeUnit.MILLISECONDS);
+            //Cannot send as one message because of character maximum
+            //Figure out what "blob" will get closest to 2000 characters without passing it
+            for (String value : s) {
+                event.getChannel().sendMessage(value).queue();
+            }
         }
 
         if (messageComponents[0].equals("bomb!wires")) {
@@ -395,7 +399,7 @@ public class Botmain extends ListenerAdapter {
                                         });
                             });
                     try {
-                        Thread.sleep((time * 1500));
+                        Thread.sleep(time * 1500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
