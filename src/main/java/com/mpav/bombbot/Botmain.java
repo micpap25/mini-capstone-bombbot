@@ -1,6 +1,5 @@
 package com.mpav.bombbot;
 
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -54,6 +53,7 @@ public class Botmain extends ListenerAdapter {
         }
 
         if (messageComponents[0].equals("bomb!mine")){
+
             int[][] minefield = new int[15][15];
 
             for (int i = 0; i < minefield.length; i++) {
@@ -134,8 +134,14 @@ public class Botmain extends ListenerAdapter {
             }
             int numSets = 1;
             int time = 0;
-            if(messageComponents.length == 4)
-                numSets = Integer.parseInt(messageComponents[3]);
+            if(messageComponents.length == 4) {
+                try {
+                    numSets = Integer.parseInt(messageComponents[3]);
+                } catch (NumberFormatException e) {
+                    event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
+                    return;
+                }
+            }
             StringBuilder playeronecontent = new StringBuilder("```Rules are prioritized from top to bottom. If a rule cannot be fulfilled, move on.```");
             StringBuilder playertwocontent = new StringBuilder();
             final String[] colors = {"red", "blue", "black", "white"};
@@ -364,12 +370,11 @@ public class Botmain extends ListenerAdapter {
                                                         if (yesStatement) {
                                                             event.getChannel().sendMessage("```" + trueCorrectResponses[index] + "```").queue();
                                                             isSafeYes.set(true);
-                                                            return false;
                                                         } else {
                                                             event.getChannel().sendMessage("```" +falseMismatchResponses[index] + "```").queue();
                                                             players.remove(user);
-                                                            return false;
                                                         }
+                                                        return false;
                                                     }
                                                     return true;
                                                 });
@@ -379,12 +384,11 @@ public class Botmain extends ListenerAdapter {
                                                         if (!yesStatement) {
                                                             event.getChannel().sendMessage("```" +falseCorrectResponses[index] + "```" ).queue();
                                                             isSafeNo.set(true);
-                                                            return false;
                                                         } else {
                                                             event.getChannel().sendMessage("```" +trueMismatchResponses[index] + "```").queue();
                                                             players.remove(user);
-                                                            return false;
                                                         }
+                                                        return false;
                                                     }
                                                     return true;
                                                 });
