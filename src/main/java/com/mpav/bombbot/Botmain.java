@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//Next up: add enums and helper functions to make this look presentable
+
 public class Botmain extends ListenerAdapter {
 
     public static void main(String[] args) throws LoginException, IOException {
@@ -29,6 +31,7 @@ public class Botmain extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        String[] difficulties = {"easy", "medium", "hard", "brutal"};
         String[] trueMessages = {"do you want to defuse the bomb?", "are you scared?", "are you feeling OK?", "vent gas?", "are you going to win?"};
         String[] trueCorrectResponses = {"You try, but fail. At least you aren't dead.", "Good. A healthy dose of fear is necessary.", "Be safe, alright?", "You vent the gas. That feels better.", "That's the kind of attitude I like!"};
         String[] trueMismatchResponses = {"Inaction leads to consequences!", "Well, you should be.", "Uh oh...", "You start to feel a little weak...", "Hey! Be more confident next time!"};
@@ -45,22 +48,65 @@ public class Botmain extends ListenerAdapter {
         Message message = event.getMessage();
         String[] messageComponents = message.getContentRaw().split(" ");
 
+        //Add documentation for each game to reduce clutter here.
         if (messageComponents[0].equals("bomb!help")) {
-            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\n\n Minesweeper : bomb!mine\n Wires : bomb!wires @player1 @player2 [optional: number of sets]\n Big Bomb : bomb!bigbomb\n BOOM!```").queue();
+            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\n Minesweeper : bomb!mine\n[rows columns, default 15x15, minimum 5x5, max 20x25]\n[difficulty (easy, medium, hard, brutal), default medium]\n Wires : bomb!wires @player1 @player2 [number of sets]\n Big Bomb : bomb!bigbomb```").queue();
             if (messageComponents.length > 10) {
                 event.getChannel().sendMessage("```...dude, chill out a little...```").queueAfter(1, TimeUnit.SECONDS);
             }
         }
 
         if (messageComponents[0].equals("bomb!mine")) {
+            //Rework this whole section to work with exact bomb numbers
+            String difficulty = "medium";
             int rows = 15;
             int columns = 15;
+            //TODO: could extract this whole part to functions, will do in the enum update
+            if (messageComponents.length == 2 || messageComponents.length == 4){
+                if (!Arrays.asList(difficulties).contains(messageComponents[messageComponents.length - 1])){
+                    event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
+                    return;
+                }
+                difficulty = messageComponents[messageComponents.length - 1];
+            }
+            if (messageComponents.length == 3 || messageComponents.length == 4) {
+                try{
+                    rows = Integer.parseInt(messageComponents[1]);
+                    columns = Integer.parseInt(messageComponents[2]);
+                } catch (NumberFormatException e) {
+                    event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
+                    return;
+                }
+                if (rows < 5 || rows > 20 || columns < 5 || columns > 25){
+                    event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
+                    return;
+                }
+            }
+            if (messageComponents.length > 5){
+                event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
+                return;
+            }
+            int difficultyNum = 0;
+            switch (difficulty){
+                case "easy":
+                    difficultyNum = 20;
+                    break;
+                case "medium":
+                    difficultyNum = 40;
+                    break;
+                case "hard":
+                    difficultyNum = 60;
+                    break;
+                case "brutal":
+                    difficultyNum = 80;
+                    break;
+            }
             int[][] minefield = new int[rows][columns];
 
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < columns; j++) {
                     int bomb = (int) (Math.random() * 255);
-                    if (bomb < 40)
+                    if (bomb < difficultyNum)
                         minefield[i][j] = -1;
                 }
             }
@@ -81,9 +127,17 @@ public class Botmain extends ListenerAdapter {
             int randZeroX = (int) (Math.random() * minefield[0].length);
             int randZeroY = (int) (Math.random() * minefield.length);
 
+            int failsafeCount = 0;
             while (minefield[randZeroY][randZeroX] != 0) {
                 randZeroX = (int) (Math.random() * minefield[0].length);
                 randZeroY = (int) (Math.random() * minefield.length);
+                failsafeCount++;
+                if (failsafeCount > 10000){
+                    event.getChannel().sendMessage("```There are almost definitely no zeroes in this minefield... good luck!```").queue();
+                    randZeroX = -1;
+                    randZeroY = -1;
+                    break;
+                }
             }
 
             String[] s = new String[rows];
@@ -124,10 +178,31 @@ public class Botmain extends ListenerAdapter {
                 }
             }
             event.getChannel().sendMessage("```Generating...```").queue();
+
             //Cannot send as one message because of character maximum
-            //Figure out what "blob" will get closest to 2000 characters without passing it
-            for (String value : s) {
-                event.getChannel().sendMessage(value).queue();
+            //Sending in groups of 9-ish would be optimal, but anything other than all or 1 at a time has weird spacing problems
+            //TODO: Let users input a variable for the "fast but uneven" option.
+            //Will do when functions are made
+
+            /*StringBuilder msg = new StringBuilder();
+            for (int i = 0; i < s.length; i++) {
+                msg.append(s[i]).append("\n");
+                if (i % 5 == 0){
+                    event.getChannel().sendMessage(msg).queue();
+                    msg = new StringBuilder();
+                }
+            }
+            if (!msg.toString().equals("")){
+                event.getChannel().sendMessage(msg).queue();
+            }*/
+
+            try {
+                for (String msg : s){
+                    event.getChannel().sendMessage(msg).queue();
+                        Thread.sleep(1100);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
@@ -374,7 +449,7 @@ public class Botmain extends ListenerAdapter {
                                                         event.getChannel().sendMessage("```" + trueCorrectResponses[index] + "```").queue();
                                                         isSafeYes.set(true);
                                                     } else {
-                                                        event.getChannel().sendMessage("```" + falseMismatchResponses[index] + "```").queue();
+                                                        event.getChannel().sendMessage("```" + falseMismatchResponses[index] + " You're out!```").queue();
                                                         players.remove(user);
                                                     }
                                                     return false;
