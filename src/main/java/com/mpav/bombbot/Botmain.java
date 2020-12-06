@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.requests.RestAction;
 
 import javax.security.auth.login.LoginException;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,12 +17,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//Next up: add enums and helper functions to make this look presentable
+//Next small thing up: Dynamically decide whether to print the whole minefield at once
+//or go line-by-line.
+//Next big thing up: add enums and helper functions to make this look presentable
 
 public class Botmain extends ListenerAdapter {
 
     public static void main(String[] args) throws LoginException, IOException {
-        String key = new BufferedReader(new FileReader(new File("key"))).readLine();
+        String key = new BufferedReader(new FileReader("key")).readLine();
         JDABuilder jdaB = JDABuilder.createDefault(key);
         jdaB.addEventListeners(new Botmain());
         jdaB.build();
@@ -50,7 +51,7 @@ public class Botmain extends ListenerAdapter {
 
         //Add documentation for each game to reduce clutter here.
         if (messageComponents[0].equals("bomb!help")) {
-            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\n Minesweeper : bomb!mine\n[rows columns, default 15x15, minimum 5x5, max 20x25]\n[difficulty (easy, medium, hard, brutal), default medium]\n Wires : bomb!wires @player1 @player2 [number of sets]\n Big Bomb : bomb!bigbomb```").queue();
+            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\n Minesweeper : bomb!mine [rows] [columns] [difficulty]\nMaximum size is 20x25, default is 10x10\nDifficulties are easy, medium, hard, and brutal,\ndefault is medium\nRemember to set \"Show Spoiler Content\"\nto \"On Click\".\nOnWires : bomb!wires @player1 @player2 number-of-sets\n Big Bomb : bomb!bigbomb```").queue();
             if (messageComponents.length > 10) {
                 event.getChannel().sendMessage("```...dude, chill out a little...```").queueAfter(1, TimeUnit.SECONDS);
             }
