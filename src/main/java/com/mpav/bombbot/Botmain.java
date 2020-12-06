@@ -51,7 +51,7 @@ public class Botmain extends ListenerAdapter {
 
         //Add documentation for each game to reduce clutter here.
         if (messageComponents[0].equals("bomb!help")) {
-            event.getChannel().sendMessage("``` Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\n Minesweeper : bomb!mine [rows] [columns] [difficulty]\nMaximum size is 20x25, default is 10x10\nDifficulties are easy, medium, hard, and brutal,\ndefault is medium\nRemember to set \"Show Spoiler Content\"\nto \"On Click\".\nOnWires : bomb!wires @player1 @player2 number-of-sets\n Big Bomb : bomb!bigbomb```").queue();
+            event.getChannel().sendMessage("```Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\nMinesweeper : bomb!mine [rows] [columns] [difficulty]\nMaximum size is 20x25, default is 10x10\nDifficulties are easy, medium, hard, and brutal,\ndefault is medium\nRemember to set \"Show Spoiler Content\" to \"On Click\".\n\nWires : bomb!wires @player1 @player2 number-of-sets\n\nBig Bomb : bomb!bigbomb```").queue();
             if (messageComponents.length > 10) {
                 event.getChannel().sendMessage("```...dude, chill out a little...```").queueAfter(1, TimeUnit.SECONDS);
             }
