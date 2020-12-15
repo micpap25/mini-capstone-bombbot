@@ -60,8 +60,8 @@ public class Botmain extends ListenerAdapter {
         if (messageComponents[0].equals("bomb!mine")) {
             //Rework this whole section to work with exact bomb numbers
             String difficulty = "medium";
-            int rows = 15;
-            int columns = 15;
+            int rows = 10;
+            int columns = 10;
             //TODO: could extract this whole part to functions, will do in the enum update
             if (messageComponents.length == 2 || messageComponents.length == 4){
                 if (!Arrays.asList(difficulties).contains(messageComponents[messageComponents.length - 1])){
@@ -178,32 +178,31 @@ public class Botmain extends ListenerAdapter {
                     }
                 }
             }
-            event.getChannel().sendMessage("```Generating...```").queue();
 
             //Cannot send as one message because of character maximum
             //Sending in groups of 9-ish would be optimal, but anything other than all or 1 at a time has weird spacing problems
             //TODO: Let users input a variable for the "fast but uneven" option.
             //Will do when functions are made
 
-            /*StringBuilder msg = new StringBuilder();
-            for (int i = 0; i < s.length; i++) {
-                msg.append(s[i]).append("\n");
-                if (i % 5 == 0){
-                    event.getChannel().sendMessage(msg).queue();
-                    msg = new StringBuilder();
-                }
+            StringBuilder msg = new StringBuilder();
+            for (String value : s) {
+                msg.append(value).append("\n");
             }
-            if (!msg.toString().equals("")){
+            System.out.println(msg.length());
+            if (!msg.toString().equals("") && msg.length() <= 2000){
+                event.getChannel().sendMessage("```Generated!```").queue();
                 event.getChannel().sendMessage(msg).queue();
-            }*/
-
-            try {
-                for (String msg : s){
-                    event.getChannel().sendMessage(msg).queue();
+            }
+            else if (!msg.toString().equals("")){
+                event.getChannel().sendMessage("```Generating... please wait!```").queue();
+                try {
+                    for (String line : s){
+                        event.getChannel().sendMessage(line).queue();
                         Thread.sleep(1100);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
 
@@ -496,8 +495,6 @@ public class Botmain extends ListenerAdapter {
                 }
                 event.getChannel().sendMessage("```Congratulations, " + players.get(0).getName() + ", you win!```").queue();
             }
-
-
         }
         //   if(messageComponents[0].equals("bomb!meme")){
         //       event.getChannel().sendMessage().queue();
