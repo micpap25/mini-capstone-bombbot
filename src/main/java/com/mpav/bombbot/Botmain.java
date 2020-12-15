@@ -63,32 +63,32 @@ public class Botmain extends ListenerAdapter {
             int rows = 10;
             int columns = 10;
             //TODO: could extract this whole part to functions, will do in the enum update
-            if (messageComponents.length == 2 || messageComponents.length == 4){
-                if (!Arrays.asList(difficulties).contains(messageComponents[messageComponents.length - 1])){
+            if (messageComponents.length == 2 || messageComponents.length == 4) {
+                if (!Arrays.asList(difficulties).contains(messageComponents[messageComponents.length - 1])) {
                     event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                     return;
                 }
                 difficulty = messageComponents[messageComponents.length - 1];
             }
             if (messageComponents.length == 3 || messageComponents.length == 4) {
-                try{
+                try {
                     rows = Integer.parseInt(messageComponents[1]);
                     columns = Integer.parseInt(messageComponents[2]);
                 } catch (NumberFormatException e) {
                     event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                     return;
                 }
-                if (rows < 5 || rows > 20 || columns < 5 || columns > 25){
+                if (rows < 5 || rows > 20 || columns < 5 || columns > 25) {
                     event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                     return;
                 }
             }
-            if (messageComponents.length > 5){
+            if (messageComponents.length > 5) {
                 event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                 return;
             }
             int difficultyNum = 0;
-            switch (difficulty){
+            switch (difficulty) {
                 case "easy":
                     difficultyNum = 20;
                     break;
@@ -133,7 +133,7 @@ public class Botmain extends ListenerAdapter {
                 randZeroX = (int) (Math.random() * minefield[0].length);
                 randZeroY = (int) (Math.random() * minefield.length);
                 failsafeCount++;
-                if (failsafeCount > 10000){
+                if (failsafeCount > 10000) {
                     event.getChannel().sendMessage("```There are almost definitely no zeroes in this minefield... good luck!```").queue();
                     randZeroX = -1;
                     randZeroY = -1;
@@ -189,14 +189,13 @@ public class Botmain extends ListenerAdapter {
                 msg.append(value).append("\n");
             }
             System.out.println(msg.length());
-            if (!msg.toString().equals("") && msg.length() <= 2000){
+            if (!msg.toString().equals("") && msg.length() <= 2000) {
                 event.getChannel().sendMessage("```Generated!```").queue();
                 event.getChannel().sendMessage(msg).queue();
-            }
-            else if (!msg.toString().equals("")){
+            } else if (!msg.toString().equals("")) {
                 event.getChannel().sendMessage("```Generating... please wait!```").queue();
                 try {
-                    for (String line : s){
+                    for (String line : s) {
                         event.getChannel().sendMessage(line).queue();
                         Thread.sleep(1100);
                     }
