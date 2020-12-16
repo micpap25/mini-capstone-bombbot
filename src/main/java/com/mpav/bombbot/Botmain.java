@@ -17,8 +17,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//Next small thing up: Dynamically decide whether to print the whole minefield at once
-//or go line-by-line.
+
+
+//Next small thing up: remove minimum minefield size and say number of mines
 //Next big thing up: add enums and helper functions to make this look presentable
 
 public class Botmain extends ListenerAdapter {
@@ -32,7 +33,7 @@ public class Botmain extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        String[] difficulties = {"easy", "medium", "hard", "brutal"};
+        String[] difficulties = {"easy", "medium", "hard", "brutal", "impossible"};
         String[] trueMessages = {"do you want to defuse the bomb?", "are you scared?", "are you feeling OK?", "vent gas?", "are you going to win?"};
         String[] trueCorrectResponses = {"You try, but fail. At least you aren't dead.", "Good. A healthy dose of fear is necessary.", "Be safe, alright?", "You vent the gas. That feels better.", "That's the kind of attitude I like!"};
         String[] trueMismatchResponses = {"Inaction leads to consequences!", "Well, you should be.", "Uh oh...", "You start to feel a little weak...", "Hey! Be more confident next time!"};
@@ -51,7 +52,7 @@ public class Botmain extends ListenerAdapter {
 
         //Add documentation for each game to reduce clutter here.
         if (messageComponents[0].equals("bomb!help")) {
-            event.getChannel().sendMessage("```Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\nMinesweeper : bomb!mine [rows] [columns] [difficulty]\nMaximum size is 20x25, default is 10x10\nDifficulties are easy, medium, hard, and brutal,\ndefault is medium\nRemember to set \"Show Spoiler Content\" to \"On Click\".\n\nWires : bomb!wires @player1 @player2 number-of-sets\n\nBig Bomb : bomb!bigbomb```").queue();
+            event.getChannel().sendMessage("```Hi! I'm a minigame bot for playing tons of games!\nHere's a list of the things I can do. If something's in brackets, it's optional.\n\nMinesweeper : bomb!mine [rows] [columns] [difficulty]\nMaximum size is 20x25, default is 10x10\nDifficulties are easy, medium, hard, brutal, and impossible,\ndefault is medium\nRemember to set \"Show Spoiler Content\" to \"On Click\".\n\nWires : bomb!wires @player1 @player2 number-of-sets\n\nBig Bomb : bomb!bigbomb```").queue();
             if (messageComponents.length > 10) {
                 event.getChannel().sendMessage("```...dude, chill out a little...```").queueAfter(1, TimeUnit.SECONDS);
             }
@@ -78,7 +79,7 @@ public class Botmain extends ListenerAdapter {
                     event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                     return;
                 }
-                if (rows < 5 || rows > 20 || columns < 5 || columns > 25) {
+                if (rows > 20 || columns > 25) {
                     event.getChannel().sendMessage("```Please use the proper format! Type bomb!help for more info.```").queue();
                     return;
                 }
@@ -101,14 +102,20 @@ public class Botmain extends ListenerAdapter {
                 case "brutal":
                     difficultyNum = 80;
                     break;
+                case "impossible":
+                    difficultyNum = 100;
+                    break;
             }
             int[][] minefield = new int[rows][columns];
+            int mines = 0;
 
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < columns; j++) {
                     int bomb = (int) (Math.random() * 255);
-                    if (bomb < difficultyNum)
+                    if (bomb < difficultyNum) {
                         minefield[i][j] = -1;
+                        mines++;
+                    }
                 }
             }
             for (int i = 0; i < rows; i++) {
@@ -188,12 +195,11 @@ public class Botmain extends ListenerAdapter {
             for (String value : s) {
                 msg.append(value).append("\n");
             }
-            System.out.println(msg.length());
             if (!msg.toString().equals("") && msg.length() <= 2000) {
-                event.getChannel().sendMessage("```Generated!```").queue();
+                event.getChannel().sendMessage("```Generated!\nNumber of mines: " + mines + "```").queue();
                 event.getChannel().sendMessage(msg).queue();
             } else if (!msg.toString().equals("")) {
-                event.getChannel().sendMessage("```Generating... please wait!```").queue();
+                event.getChannel().sendMessage("```Generating... please wait!\nNumber of mines: " + mines + "```").queue();
                 try {
                     for (String line : s) {
                         event.getChannel().sendMessage(line).queue();
